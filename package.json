@@ -1,7 +1,7 @@
 {
   "name": "inspired-ui",
   "version": "0.1.0",
-  "description": "Design tokens + React component library powering inspiredeffect.com. Built on shadcn/ui primitives with a custom violet/engineered palette.",
+  "description": "Design tokens + React component library powering dywayne.com. Built on shadcn/ui primitives with a custom violet/engineered palette.",
   "type": "module",
   "license": "MIT",
   "author": "Dywayne Johnson <djohnsonkc@gmail.com>",

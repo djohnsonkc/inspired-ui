@@ -1,6 +1,6 @@
 # inspired-ui
 
-Design tokens + React component library powering [inspiredeffect.com](https://inspiredeffect.com). Built on [shadcn/ui](https://ui.shadcn.com) primitives with a custom violet/engineered palette.
+Design tokens + React component library powering [dywayne.com](https://dywayne.com). Built on [shadcn/ui](https://ui.shadcn.com) primitives with a custom violet/engineered palette.
 
 This repo is the *standalone reference* for the design system. The portfolio site (private) consumes it as a versioned tarball.
 
@@ -11,13 +11,11 @@ This repo is the *standalone reference* for the design system. The portfolio sit
 ```
 src/
 ├── lib/
-│   ├── utils.ts           cn() helper (clsx + tailwind-merge)
-│   └── theme.tsx          ThemeProvider + useTheme (light/dark, system-aware, persisted)
+│   └── utils.ts           cn() helper (clsx + tailwind-merge)
 ├── components/
 │   ├── button/            shadcn Button, customized — rounded-full pill, beefier padding
 │   ├── chip/              Mono-uppercase pill with optional foundation variant (green dot)
 │   ├── card-glow/         Atmospheric violet glow primitive for cards
-│   ├── theme-toggle/      Sun/Moon icon button using the theme system
 │   └── live-in-production-card/  Rich card pattern: tags, summary, tech chips, glow, URL
 ├── styles/
 │   └── inspired-tokens.css Tokens entry — palette + Tailwind v4 @theme bridge + base layer
@@ -42,13 +40,7 @@ src/
 - A single `data-palette` attribute on `<html>` selects the active palette.
 - The default palette is **engineered-violet** — cool neutral foundation, violet accent.
 - Adding a new palette is a copy-paste of one block in [`src/styles/inspired-tokens.css`](src/styles/inspired-tokens.css).
-- Light vs dark mode is the `.dark` class on `<html>`, controlled by `ThemeProvider` from this library.
-
-### Theme persistence
-
-- First visit: follows `prefers-color-scheme`.
-- After the user toggles: choice stored in `localStorage` under `inspired_theme`.
-- Reverts to system-following only if the storage key is cleared.
+- Light vs dark mode is the `.dark` class on `<html>`. The library doesn't ship a provider, hook, or toggle — the tokens respond to the class, and the consuming app decides how to set it (state, persistence, system preference, etc.).
 
 ### Why pill-rounded buttons
 
@@ -113,37 +105,14 @@ This:
    ```html
    <html lang="en" data-palette="engineered-violet">
    ```
-6. Wrap your app in `<ThemeProvider>` and use components:
+6. Use components:
    ```tsx
-   import { ThemeProvider, Button, ThemeToggle } from "inspired-ui"
+   import { Button } from "inspired-ui"
 
-   <ThemeProvider>
-     <Button>Hello</Button>
-     <ThemeToggle />
-   </ThemeProvider>
+   <Button>Hello</Button>
    ```
 
----
-
-## Avoiding the dark-mode flash
-
-Because React mounts after the page parses, dark-mode users see a flash of light theme on first load. Prevent it with a tiny inline script in `<head>`, *before* the main bundle:
-
-```html
-<script>
-  (function () {
-    try {
-      var stored = localStorage.getItem("inspired_theme");
-      var dark =
-        stored === "dark" ||
-        (stored === null &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches);
-      if (dark) document.documentElement.classList.add("dark");
-      document.documentElement.style.colorScheme = dark ? "dark" : "light";
-    } catch (e) {}
-  })();
-</script>
-```
+7. Apply `.dark` on `<html>` from your own app code when you want dark mode. Example: toggle from a `useState`, sync with `prefers-color-scheme`, and persist however suits your app — none of that lives in this library.
 
 ---
 
