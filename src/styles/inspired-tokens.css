@@ -1,0 +1,119 @@
+/*
+ * inspired-ui tokens — design system entry CSS
+ *
+ * Usage in a consuming app (after Tailwind v4 is set up):
+ *   @import "tailwindcss";
+ *   @import "inspired-ui/tokens";
+ *
+ * This file:
+ *   - Imports tw-animate-css for built-in keyframes
+ *   - Declares the @custom-variant for class-based dark mode
+ *   - Defines the violet "engineered" palette as oklch tokens
+ *   - Sets up the Tailwind v4 @theme inline bridge so shadcn primitives
+ *     resolve --color-background, --color-foreground, etc.
+ *   - Adds base layer styles for body + outline
+ *
+ * The active palette is selected via `data-palette` on <html>. The default
+ * is `engineered-violet`. To add a new palette, copy a block below and
+ * switch via `document.documentElement.dataset.palette = "your-key"` or
+ * `<html data-palette="your-key">`.
+ */
+
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.625rem;
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+/* ─── Palette: engineered-violet (default) ─── */
+
+[data-palette="engineered-violet"] {
+  --background: oklch(0.99 0.003 240);
+  --foreground: oklch(0.18 0.012 270);
+  --card: oklch(0.99 0.003 240);
+  --card-foreground: oklch(0.18 0.012 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.012 270);
+  --primary: oklch(0.55 0.22 285);
+  --primary-foreground: oklch(0.99 0.003 240);
+  --secondary: oklch(0.96 0.005 270);
+  --secondary-foreground: oklch(0.22 0.012 270);
+  --muted: oklch(0.96 0.005 270);
+  --muted-foreground: oklch(0.5 0.012 270);
+  --accent: oklch(0.95 0.012 285);
+  --accent-foreground: oklch(0.3 0.05 285);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0.003 240);
+  --border: oklch(0.9 0.008 270);
+  --input: oklch(0.9 0.008 270);
+  --ring: oklch(0.55 0.22 285 / 50%);
+}
+
+[data-palette="engineered-violet"].dark {
+  --background: oklch(0.16 0.014 270);
+  --foreground: oklch(0.97 0.003 240);
+  --card: oklch(0.2 0.014 270);
+  --card-foreground: oklch(0.97 0.003 240);
+  --popover: oklch(0.2 0.014 270);
+  --popover-foreground: oklch(0.97 0.003 240);
+  --primary: oklch(0.72 0.18 285);
+  --primary-foreground: oklch(0.16 0.014 270);
+  --secondary: oklch(0.26 0.014 270);
+  --secondary-foreground: oklch(0.97 0.003 240);
+  --muted: oklch(0.26 0.014 270);
+  --muted-foreground: oklch(0.7 0.012 270);
+  --accent: oklch(0.28 0.04 285);
+  --accent-foreground: oklch(0.92 0.05 285);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.97 0.003 240);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.18 285 / 50%);
+}
+
+/* ─── Tailwind v4 theme bridge ───
+ * Maps semantic tokens to Tailwind's color system so shadcn primitives
+ * (e.g. bg-background, text-foreground) resolve to the active palette.
+ */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
