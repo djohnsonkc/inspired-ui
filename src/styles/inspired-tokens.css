@@ -8,15 +8,19 @@
  * This file:
  *   - Imports tw-animate-css for built-in keyframes
  *   - Declares the @custom-variant for class-based dark mode
- *   - Defines the violet "engineered" palette as oklch tokens
+ *   - Defines the palettes: violet "engineered" (oklch) and neutral "charcoal"
+ *   - Defines data-accent brand layers (violet, blue) that set only the
+ *     primary/ring/accent tokens on top of a palette
  *   - Sets up the Tailwind v4 @theme inline bridge so shadcn primitives
  *     resolve --color-background, --color-foreground, etc.
  *   - Adds base layer styles for body + outline
  *
- * The active palette is selected via `data-palette` on <html>. The default
- * is `engineered-violet`. To add a new palette, copy a block below and
- * switch via `document.documentElement.dataset.palette = "your-key"` or
- * `<html data-palette="your-key">`.
+ * The active palette is selected via `data-palette` on <html>, and an
+ * optional brand accent via `data-accent`:
+ *   <html data-palette="charcoal" data-accent="violet">
+ * The default is `engineered-violet`. To add a new palette or accent, copy a
+ * block below and switch via `document.documentElement.dataset.palette` /
+ * `.dataset.accent`, or the attributes on <html>.
  */
 
 @import "tw-animate-css";
@@ -51,6 +55,12 @@
   --border: oklch(0.9 0.008 270);
   --input: oklch(0.9 0.008 270);
   --ring: oklch(0.55 0.22 285 / 50%);
+  --primary-hover: oklch(0.49 0.22 285);
+  --primary-muted: oklch(0.5 0.08 285);
+  --success: oklch(0.52 0.12 165);
+  --success-foreground: oklch(0.99 0.003 240);
+  --warning: oklch(0.58 0.12 75);
+  --warning-foreground: oklch(0.99 0.003 240);
 }
 
 [data-palette="engineered-violet"].dark {
@@ -73,6 +83,135 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.72 0.18 285 / 50%);
+  --primary-hover: oklch(0.8 0.13 285);
+  --primary-muted: oklch(0.7 0.07 285);
+  --success: oklch(0.77 0.13 165);
+  --success-foreground: oklch(0.16 0.014 270);
+  --warning: oklch(0.84 0.14 85);
+  --warning-foreground: oklch(0.16 0.014 270);
+}
+
+/* ─── Palette: charcoal ───
+ * Neutral, slightly blue-gray foundation shared across products. Softer than
+ * engineered-violet: a charcoal canvas instead of near-black, off-white text,
+ * and hierarchy from surface steps rather than bright borders.
+ *
+ * Owns surfaces, text, borders, and status colors. The brand accent
+ * (--primary, --ring, --accent) comes from a data-accent layer below, so each
+ * product keeps its own color on the same foundation:
+ *   <html data-palette="charcoal" data-accent="violet">
+ * Without data-accent, charcoal falls back to violet.
+ */
+
+[data-palette="charcoal"] {
+  --background: #f6f7f9; /* canvas */
+  --foreground: #1f242c;
+  --card: #ffffff; /* surface */
+  --card-foreground: #1f242c;
+  --popover: #ffffff;
+  --popover-foreground: #1f242c;
+  --secondary: #eef0f3; /* raised */
+  --secondary-foreground: #1f242c;
+  --muted: #eef0f3;
+  --muted-foreground: #5b6472;
+  --destructive: #c93540;
+  --destructive-foreground: #ffffff;
+  --success: #13865f;
+  --success-foreground: #ffffff;
+  --warning: #9a6b00;
+  --warning-foreground: #ffffff;
+  --border: #dce0e6;
+  --input: #dce0e6;
+  /* Default accent (violet); overridden by data-accent */
+  --primary: #6d4fd1;
+  --primary-foreground: #ffffff;
+  --accent: color-mix(in oklab, #6d4fd1 10%, #ffffff);
+  --accent-foreground: #3f2c8f;
+  --ring: rgb(109 79 209 / 50%);
+  --primary-hover: #5b3fbd;
+  --primary-muted: #6b5f99;
+}
+
+[data-palette="charcoal"].dark {
+  --background: #252830; /* canvas */
+  --foreground: #e8ebf0;
+  --card: #2d333d; /* surface */
+  --card-foreground: #e8ebf0;
+  --popover: #2d333d;
+  --popover-foreground: #e8ebf0;
+  --secondary: #373f4a; /* raised */
+  --secondary-foreground: #e8ebf0;
+  --muted: #373f4a;
+  --muted-foreground: #aab4c2;
+  --destructive: #f08088;
+  --destructive-foreground: #252830;
+  --success: #4cc9a0;
+  --success-foreground: #252830;
+  --warning: #f2c45a;
+  --warning-foreground: #252830;
+  --border: #3b424d;
+  --input: #3b424d;
+  /* Default accent (violet); overridden by data-accent */
+  --primary: #a78bfa;
+  --primary-foreground: #252830;
+  --accent: color-mix(in oklab, #a78bfa 16%, #2d333d);
+  --accent-foreground: #e4dcff;
+  --ring: rgb(167 139 250 / 50%);
+  --primary-hover: #c4b5fd;
+  --primary-muted: #988cc0;
+}
+
+/* ─── Accents ───
+ * Brand color layer on top of a palette: sets only the primary family
+ * (--primary, --primary-hover, --primary-muted), --ring, and --accent.
+ *
+ * Brand color vs. action color: --primary is the bright, "click me" color,
+ * reserved for CTAs and selected/hover states. --primary-hover is its hover.
+ * --primary-muted is the same hue at lower intensity for non-interactive
+ * accents (eyebrow labels, taglines). Neutral by default, color with purpose.
+ * Declared after the palettes so it wins at equal specificity.
+ * Each pair passes WCAG AA for the accent on its canvas and for the
+ * foreground on a filled button.
+ */
+
+[data-accent="violet"] {
+  --primary: #6d4fd1;
+  --primary-foreground: #ffffff;
+  --accent: color-mix(in oklab, #6d4fd1 10%, #ffffff);
+  --accent-foreground: #3f2c8f;
+  --ring: rgb(109 79 209 / 50%);
+  --primary-hover: #5b3fbd;
+  --primary-muted: #6b5f99;
+}
+
+[data-accent="violet"].dark {
+  --primary: #a78bfa;
+  --primary-foreground: #252830;
+  --accent: color-mix(in oklab, #a78bfa 16%, #2d333d);
+  --accent-foreground: #e4dcff;
+  --ring: rgb(167 139 250 / 50%);
+  --primary-hover: #c4b5fd;
+  --primary-muted: #988cc0;
+}
+
+[data-accent="blue"] {
+  --primary: #2b6cb0;
+  --primary-foreground: #ffffff;
+  --accent: color-mix(in oklab, #2b6cb0 10%, #ffffff);
+  --accent-foreground: #1d4a7a;
+  --ring: rgb(43 108 176 / 50%);
+  --primary-hover: #235a94;
+  --primary-muted: #4f6a85;
+}
+
+[data-accent="blue"].dark {
+  --primary: #60a5d9;
+  --primary-foreground: #252830;
+  --accent: color-mix(in oklab, #60a5d9 16%, #2d333d);
+  --accent-foreground: #d6e9f8;
+  --ring: rgb(96 165 217 / 50%);
+  --primary-hover: #93c5ea;
+  --primary-muted: #7f9bb3;
 }
 
 /* ─── Tailwind v4 theme bridge ───
@@ -93,6 +232,8 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -101,6 +242,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

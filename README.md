@@ -37,9 +37,17 @@ src/
 
 ### Theming model
 
-- A single `data-palette` attribute on `<html>` selects the active palette.
-- The default palette is **engineered-violet** — cool neutral foundation, violet accent.
-- Adding a new palette is a copy-paste of one block in [`src/styles/inspired-tokens.css`](src/styles/inspired-tokens.css).
+- A `data-palette` attribute on `<html>` selects the active palette:
+  - **engineered-violet** (default): cool neutral foundation, violet accent, near-black dark mode.
+  - **charcoal**: softer, slightly blue-gray foundation shared across products: a charcoal canvas (`#252830` dark), off-white text, and hierarchy from surface steps (canvas → card → raised) rather than bright borders.
+- An optional `data-accent` attribute sets the brand color on top of the palette (the primary family, `--ring`, and `--accent` only), so products share surfaces and typography but keep their own identity: `violet` (`#A78BFA` dark) or `blue` (`#60A5D9` dark). Without it, charcoal uses violet.
+- **Brand color vs. action color — neutral by default, color with purpose:**
+  - `primary` is the bright "click me" color. Reserve it for CTAs and selected or hover states.
+  - `primary-hover` is its hover state (Button uses it).
+  - `primary-muted` is the same hue at lower intensity for non-interactive accents like eyebrow labels and taglines (`text-primary-muted`).
+- Status tokens `success` and `warning` (alongside `destructive`) are available as `bg-success`, `text-warning`, etc.
+- Every palette and accent pairing meets WCAG AA contrast for text, in light and dark.
+- Adding a new palette or accent is a copy-paste of one block in [`src/styles/inspired-tokens.css`](src/styles/inspired-tokens.css).
 - Light vs dark mode is the `.dark` class on `<html>`. The library doesn't ship a provider, hook, or toggle — the tokens respond to the class, and the consuming app decides how to set it (state, persistence, system preference, etc.).
 
 ### Why pill-rounded buttons
@@ -101,9 +109,9 @@ This:
    @import "tailwindcss";
    @import "inspired-ui/tokens";
    ```
-5. Set the active palette on `<html>` in your `index.html`:
+5. Set the active palette (and optional accent) on `<html>` in your `index.html`:
    ```html
-   <html lang="en" data-palette="engineered-violet">
+   <html lang="en" data-palette="charcoal" data-accent="violet">
    ```
 6. Use components:
    ```tsx
